@@ -1,0 +1,29 @@
+{{define "Chatapp"}}
+<link rel="stylesheet" href="/static/styles/chatbot_styles.css">
+<script defer src="/static/scripts/chatbot.js"></script>
+
+<section class="custom-section chatbotfull show-chatbot">
+    <div class="chatbotANDheader">
+        <h2 class="color-text">Find information for <br>any Newyork suburb</h2>
+        <div class="chatbot">
+            <div class="demo-header">
+                <h3 class="fix-overflow">Chatbot</h3>
+            </div>
+            <ul class="chatbox">
+                <li class="chat incoming">
+                    <span class="material-symbols-outlined">smart_toy</span>
+                    <p>Hi there 👋 <br> How can I help you today?</p>
+                </li>
+            </ul>
+            <form class="chat-input" method="POST">
+                <textarea placeholder="'Enter a message..." required></textarea>
+                <span id="send-btn" class="material-symbols-outlined">send</span>
+            </form>
+        </div>
+    </div>
+    <button class="chatbot-toggler">
+        <span class="material-symbols-outlined">mode_comment</span>
+        <span class="material-symbols-outlined">close</span>
+    </button>
+</section>
+{{end}}

@@ -1,0 +1,9 @@
+{{template "Base" .}}
+{{define "Main"}}
+<link rel="stylesheet" href="/static/styles/basic.css">
+<div id="my_container" class="background-div fix-overflow">
+    <div>
+        {{template "Chatapp" .}}
+    </div>
+</div>
+{{end}}

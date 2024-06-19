@@ -1,0 +1,83 @@
+#my_container {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+
+/* HOME */
+
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: "Poppins", sans-serif;
+    overflow-x: hidden;
+}
+
+.fix-overflow {
+    overflow-y: hidden;
+}
+
+.custom-section {
+    padding: 0 16px 120px 16px;
+}
+
+.background-home {
+    min-height: 100vh;
+    width: 100%;
+    background-image: linear-gradient(rgba(4,9,30,0.7), rgba(4,9,30,0.7)), url('../images/Graecia.png');
+    background-position: center;
+    background-size: cover;
+    position: relative;
+}
+
+.text-box {
+    width: 90%;
+    color:#fff;
+    position: absolute;
+    top: 50%;
+    left:50%;
+    transform: translate(-50%,-50%);
+    text-align: center;
+}
+
+.text-box h1 {
+    font-size: calc(4vw + 10px);
+    text-size-adjust: auto;
+}
+
+.text-box p {
+    margin: 10px 0 40px;
+    font-size: calc(0.8vw + 12px);
+    text-size-adjust: auto;
+}
+
+.book-btn {
+    display: inline-block;
+    text-decoration: none;
+    color: #fff;
+    border: 3px solid #fff;
+    padding: 12px 35px;
+    font-size: 20px;
+    background: transparent;
+    position: relative;
+    border-radius: 5px;
+}
+
+.book-btn:hover {
+    background-color: 1px solid #cb8f2b;
+    background: #cb8f2b;
+    transition: 1s;
+}
+
+
+/* PROCESS */
+
+/* Background style */
+.background-div {
+    background: linear-gradient(240deg,#28282B 3%,rgb(30,35,75) 60%,rgba(10,25,138,1));
+    z-index: 0;
+}
+
