@@ -1,7 +1,0 @@
---- GORM and demo tables
-
-
--- HTML CODE to showcase tables
-
-
--- ftiakse auto ta data sta tables kai meta des gia to pos na arxisis to bot me to openai + prompt kai pos na kaneis call stin python (logika tha xrisimopisis to flask p einai pio fask)
