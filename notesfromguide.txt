@@ -1,5 +1,0 @@
-1 - nothing import really just HandleFunc and ListenAndServe
-
-2 - Templates, use of ParseFiles-Execute for slow and ParseGlobe-ExecuteTemplate for fast
-
-3 - data into html and the {{}} stuff i did in django
