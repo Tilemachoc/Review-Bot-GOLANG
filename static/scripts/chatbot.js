@@ -1,29 +1,6 @@
-// Chat
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-
-
-
 const chatInput = document.querySelector(".chat-input textarea")
 const sendChatBtn = document.querySelector(".chat-input span")
 const chatbox = document.querySelector(".chatbox")
-//const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-// maybe use cookies to get csrftoken:
-let csrftoken = getCookie("csrftoken");
-// console.log(csrftoken)
 
 let userMessage;
 
@@ -40,18 +17,15 @@ const generateResponse = async (incomingChatLi) => {
         console.error("Incoming chat element is null or undefined.");
         return;
     }
-    // const API_URL = "http://127.0.0.1:8000";
-    const API_URL = window.location.href;
+    const API_URL = "http://127.0.0.1:8080";
+    // const API_URL = window.location.href;
     const messageElement = incomingChatLi.querySelector("p");
     if (!messageElement) {
         console.error("Message element not found within incoming chat element.");
         return;
     }
     
-    // const csrfTokenInput = document.querySelector('#csrf_token_input')
-    // const csrfToken = csrfTokenInput.value;
-    let csrftoken = getCookie("csrftoken");
-    console.log("cookie", csrftoken)
+
     let requestBody = {
         message: userMessage,
     };
@@ -60,7 +34,6 @@ const generateResponse = async (incomingChatLi) => {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "X-CSRFToken": csrftoken,
         },
         body: JSON.stringify(requestBody),
     };

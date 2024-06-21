@@ -1,0 +1,28 @@
+body {
+  font-family: sans-serif;
+}
+  
+form {
+  display: flex;
+  flex-direction: column;
+  margin: 20px;
+}
+
+label {
+  margin-bottom: 5px;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#product {
+  padding: 10px;
+  margin: 10px;
+}
+  

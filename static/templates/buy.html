@@ -1,0 +1,22 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/static/styles/product.css">
+  <title>Product Selection</title>
+</head>
+<body>
+  <h1>Select a Product</h1>
+  <form id="product-form" action="/process-selection">
+    <label for="product">Choose your product:</label>
+    <select id="product" name="product">
+      <option value="iphone-13">iPhone 13</option>
+      <option value="gpu">GPU</option>
+      <option value="monitor">Monitor</option>
+    </select>
+    <button type="submit">BUY</button>
+  </form>
+
+  <script src="/static/scripts/product.js"></script>
+</body>
+</html>

@@ -2,10 +2,14 @@ package config
 
 import(
 	"fmt"
+	"log"
 	"os"
+	"github.com/joho/godotenv"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	//"github.com/jinzhu/gorm"
+	//_ "github.com/jinzhu/gorm/dialects/mysql"
+	"gorm.io/driver/mysql"
+    "gorm.io/gorm"
 )
 
 var (
@@ -14,8 +18,12 @@ var (
 
 
 func Connect() {
-	dns := fmt.Sprintf("root:%s@tcp(localhoost:3306/productbot?charset=utf8&parseTime=True&loc=Local", os.Getenv("DB_PASSWORD"))
-	d, err := gorm.Open("mysql", dns)
+	err := godotenv.Load()
+  	if err != nil {
+    	log.Fatal("Error loading .env file")
+  	}
+	dsn := fmt.Sprintf("root:%s@tcp(localhost:3306)/productbot?charset=utf8mb4&parseTime=True&loc=Local", os.Getenv("DB_PASSWORD"))
+	d, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
