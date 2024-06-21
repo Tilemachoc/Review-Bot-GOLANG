@@ -1,9 +1,12 @@
 ### GOLANG ORM for data management
+---
 ### PYTHON FLASK for AI WORK and Automatic Messages
+---
 ### MYSQL for database
+---
 ### HTML-CSS-JS for frontend with "html/template" Golang package
 
-
+---
 ### Task 1: Design the Review Chatbot
 
 - **START:** Bot starts conversation by thanking user for buying and trusting the store, it addresses the user by name and ask nicely about the user's experience with the product by name (for example Iphone 13) on a manual message.
