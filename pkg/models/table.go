@@ -70,12 +70,12 @@ type OrderItem struct {
 }
 
 type Review struct {
-	ReviewID		uint		`gorm:"primaryKey"`
-	OrderItemID		uint		`gorm:"not null;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	UserID			uint		`gorm:"not null;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Rating			int			`gorm:"type:int;check:rating >= 1 AND rating <= 5"`
-	ReviewText		string		`gorm:"type:text"`
-	ReviewDate		time.Time	`gorm:"autoCreateTime"`
+    ReviewID      	uint      		`json:"review_id" gorm:"primaryKey"`
+    OrderItemID   	uint      		`json:"order_item_id" gorm:"not null;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+    UserID        	uint      		`json:"user_id" gorm:"not null;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+    Rating        	int       		`json:"rating" gorm:"type:int;check:rating >= 1 AND rating <= 5"`
+    ReviewText    	string    		`json:"review_text" gorm:"type:text"`
+    ReviewDate    	time.Time 		`json:"review_date" gorm:"autoCreateTime"`
 }
 
 func Init() {

@@ -5,6 +5,7 @@ import(
 	"log"
 	"net/http"
 	"html/template"
+	"encoding/json"
 	"gorm.io/gorm"
 	"github.com/Tilemachoc/TASK1/pkg/models"
 	"github.com/Tilemachoc/TASK1/pkg/config"
@@ -30,6 +31,7 @@ func main() {
 	http.HandleFunc("/", mainHandler)
 	http.HandleFunc("/users", userHandler)
 	http.HandleFunc("/buy", buyHandler)
+	http.HandleFunc("/api/users", apiUserHandler)
 
 	fmt.Println("Listening on port 8080...")
 	if err = http.ListenAndServe(":8080", nil); err != nil {
@@ -73,4 +75,28 @@ func buyHandler(w http.ResponseWriter, r *http.Request) {
 	if err := tpl.ExecuteTemplate(w, "buy.html", nil); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+
+func apiUserHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var user models.User
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&user); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	result := db.Create(&user)
+	if result.Error != nil {
+        http.Error(w, result.Error.Error(), http.StatusInternalServerError)
+        return
+    }
+
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(user)
 }

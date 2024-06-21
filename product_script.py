@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 from typing import Text, List
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
+import requests
+import json
 
 load_dotenv()
 
@@ -95,7 +97,7 @@ def ratingHandler(msg: str):
                 found += 1
                 if found> 1:
                     return get_sentiment_rating(msg)
-    return number if found == 1 else get_sentiment_rating(msg)
+    return "Thank you for your rating!", number if found == 1 else get_sentiment_rating(msg)
 
 
 def get_sentiment_rating(msg: str) -> int:
@@ -103,7 +105,7 @@ def get_sentiment_rating(msg: str) -> int:
     model = AutoModelForSequenceClassification.from_pretrained("LiYuan/amazon-review-sentiment-analysis")
     inputs = tokenizer(msg, return_tensors="pt")
     outputs = model(**inputs)
-    return torch.argmax(outputs.logits, dim=-1)
+    return "Thank you for your rating!", torch.argmax(outputs.logits, dim=-1)
 
 
 def generalHandler(history: List) -> str:
@@ -146,7 +148,28 @@ def get_response(message, product, history=None) -> dict:
     if keyword == "information":
         response_msg = informationHandler()
     if keyword == "rating":
-        response_msg = ratingHandler(message)
+        rating, response_msg = ratingHandler(message)
+        send_rating(rating=rating, user_message=message)
     if keyword == "general":
         response_msg = generalHandler(history)
+    history = add_history("assistant", response_msg, product, True, history)
     return {"message": response_msg, "history": history}
+
+
+#It would be better practice to instead get all the information from golang, maybe cookies but it's much more difficult
+def send_rating(rating: int, user_message, Id = 1, orderitemid = 2, user_id = 1):
+    url = "http://localhost:8080/api/users"
+    user_data = {
+        "review_id": Id,
+        "order_item_id": orderitemid,
+        "user_id": user_id,
+        "rating": rating,
+        "review_text": user_message
+    }
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(url, data=json.dumps(user_data), headers=headers)
+    return response.status_code
