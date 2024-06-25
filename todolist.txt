@@ -1,7 +1,0 @@
-ftiakse ena simple ui gia na epilegei o allos: iphone gpu monitory kai na leei buy
-meta depending on the selection tha peis sto prompt oti agorase: "the client has just bought a {product}"
-ara tha allaksei depending on the choice he made
-
-DES TO TASK1-TASK2-TASK3 sto readme
-
-task2(isos xriasteis na valeis kai allous user, i na ftiakseis ena login maybe)
