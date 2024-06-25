@@ -1,59 +1,45 @@
-**TASK 1 (Design the Review Chatbot):**
+### GOLANG ORM for data management
+---
+### PYTHON FLASK for AI WORK and Automatic Messages
+---
+### MYSQL for database
+---
+### HTML-CSS-JS for frontend with "html/template" Golang package
 
-    - START:
-        - Bot starts conversation by thanking user for buying and trusting the store, it addresses the user by name and ask nicely about the user's experience with the product by name (for example Iphone 13) on a manual message.
+---
+### Task 1: Design the Review Chatbot
 
-    - END:
-        - We don't want the bot to ask a lot of questions and annoy the user just a simple question and after an answer is given thank him with a manual message and let him know you can assist him with whatever else is on his mind.
+- **START:** Bot starts conversation by thanking user for buying and trusting the store, it addresses the user by name and ask nicely about the user's experience with the product by name (for example Iphone 13) on a manual message.
+- **Messaging:** When the user answers, the bot will decide if the message talks about a refund, requesting information or rating the product or just something general, if its a refund or information request an automatic message will be sent if it's a general message an AI will answer and if it's a rating it will be saved to the tables throw gorm and a automatic response will be sent.
 
-    - PROMPT:
-        - The bot should have a prompt that it should only answer to messages are that clear and relevant to the store, else it should ask for rephrase - or say something like "I didn't catch that, please be more specific, if I can't help you please contact the human team at human@team.com".
+### Task 2: Model the Review Chatbot
 
+- **Relational Database (MySQL) and GOLANG ORM (GORM):**
 
+#### Tables:
+- Users
+- Conversations
+- Orders
+- OrderItems
+- Reviews
 
-**TASK 2 (Model the Review Chatbot):**
-    Relational Database (MySQL) and GOLANG ORM (GORM).
-    Create a html page for each table (3 in total).
+#### Relationships:
+- Users can have multiple Conversations and Orders.
+- Conversations can have multiple Messages.
+- Orders can have multiple OrderItems.
+- OrderItems can have multiple Reviews.
+- Reviews link back to both Users and OrderItems.
 
-    - Tables:
+### Task 3: Implement the Review Chatbot
 
-        - Customer Information:
-            - PRIMARY_KEY : AUTO_GENERATED
-            - Name
-            - Email
-            - Region
+- **Demo Items: Includes three sample items (Phone, GPU, Monitor).**
+- **User Flow: Users select an item and click "BUY," triggering the bot's initial message.**
+- **Restriction: Access to "/" is restricted until an item is selected.**
 
-        - Chatbot Interations:
-            - PRIMARY_KEY : AUTO_GENERATED
-            - Name
-            - Chat History
+### Task 4: Demonstrate the Chatbot
 
-        - Customer Reviews:
-            - PRIMARY_KEY : AUTO_GENERATED
-            - Name
-            - Items Bought
-            - Star-Review ⭐
+- **BUY Page: Initiates purchase and triggers the bot's conversation.**
+- **Chatbot Page: Central hub for interactive sessions.**
+- **User Page: Displays user-specific information**
 
-
-
-**TASK 3 (Implement the Review Chatbot):**
-    - 3 Demo Items (Phone, GPU, Monitor)..
-    - Check 1 item and click "BUY"..
-    - That "BUY" button will trigger the start-message of the bot.
-
-
-
-**TASK 4 (Demonstrate the Chatbot):**
-    - Each time the button "BUY" is clicked the bot will get the PRIMARY_KEY of the user.
-
-    - After the end message (TASK 1 - END) the bot will check the PRIMARY_KEY of the user and modify the tables:
-        - Chatbot Interations:
-            - ADDING NEW CHAT HISTORY
-
-        - Customer Reviews:
-            - ADDING NEW ITEM-REVIEW
-
-
-
-**EXTRA TASK:**
-    - On the user's answer about the review, do sentiment analysis instead of Star-Review ⭐
+---
