@@ -43,12 +43,7 @@ def add_history(role: str, message: Text, product: str, intent: bool=True, histo
         instructions = f"You are iStore AI assistant bot assisting collection information about from customers about their experience with the {product} and answering any questions they might have. Please provide relevant information or assistance on these topics. Ensure that the responses are clear, concise, and helpful to the customer.If the customer's question or statement is about irrelevant topics, politely acknowledge it with a brief apology.In order to assist the user further ask them to provide a star review rating for the {product}"
     if history:
         history.append({"role": role, "content": message})
-        history[0].content = instructions
-        # try:
-        #     history[0].content = instructions
-        # except Exception as e:
-        #     print("Error at history content:",e)
-        #     return []
+        history[0]["content"] = instructions
     else:
         history = [{"role": "system", "content": instructions},{"role": "assistant", "content":f"Hi John 👋\nYou recently received the {product} you ordered, can you tell us about your experience?"},{"role": role, "content": message}]
     return history
@@ -70,7 +65,7 @@ def response_message(client: openai.OpenAI, history: List) -> str:
         assistant_text = response.choices[0].message.content.strip()
     except Exception as e:
         print("Error at response message:",e)
-        return ""
+        return "OPENAI returned error"
     return assistant_text
 
 
