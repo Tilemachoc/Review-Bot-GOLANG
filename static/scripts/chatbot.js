@@ -2,7 +2,14 @@ const chatInput = document.querySelector(".chat-input textarea")
 const sendChatBtn = document.querySelector(".chat-input span")
 const chatbox = document.querySelector(".chatbox")
 
+const url = window.location.href;
+const params = new URLSearchParams(url.split('?')[1]);
+const product = params.get('product');
+//console.log(product)
+
 let userMessage;
+let history;
+
 
 const createChatLi = (message, className) => {
     const chatLi = document.createElement('li')
@@ -17,7 +24,7 @@ const generateResponse = async (incomingChatLi) => {
         console.error("Incoming chat element is null or undefined.");
         return;
     }
-    const API_URL = "http://127.0.0.1:8080";
+    const API_URL = "http://127.0.0.1:8000";
     // const API_URL = window.location.href;
     const messageElement = incomingChatLi.querySelector("p");
     if (!messageElement) {
@@ -28,6 +35,8 @@ const generateResponse = async (incomingChatLi) => {
 
     let requestBody = {
         message: userMessage,
+        history: history,
+        product: product,
     };
 
     const requestOptions = {
@@ -49,6 +58,7 @@ const generateResponse = async (incomingChatLi) => {
         console.log(data);
 
         messageElement.textContent = data.message;
+        history = data.history;
         // console.log(messageElement.textContent);
     } catch (error) {
         console.error('Error in catch:', error);

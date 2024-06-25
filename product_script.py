@@ -44,24 +44,33 @@ def add_history(role: str, message: Text, product: str, intent: bool=True, histo
     if history:
         history.append({"role": role, "content": message})
         history[0].content = instructions
+        # try:
+        #     history[0].content = instructions
+        # except Exception as e:
+        #     print("Error at history content:",e)
+        #     return []
     else:
         history = [{"role": "system", "content": instructions},{"role": "assistant", "content":f"Hi John 👋\nYou recently received the {product} you ordered, can you tell us about your experience?"},{"role": role, "content": message}]
     return history
 
 
 def response_message(client: openai.OpenAI, history: List) -> str:
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages = history,
-        temperature=0,
-        max_tokens=50,
-        top_p=0.2,
-        frequency_penalty=0,
-        presence_penalty=0,
-        n=1
-    )
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages = history,
+            temperature=0,
+            max_tokens=50,
+            top_p=0.2,
+            frequency_penalty=0,
+            presence_penalty=0,
+            n=1
+        )
 
-    assistant_text = response.choices[0].message.content.strip()
+        assistant_text = response.choices[0].message.content.strip()
+    except Exception as e:
+        print("Error at response message:",e)
+        return ""
     return assistant_text
 
 
@@ -101,10 +110,14 @@ def ratingHandler(msg: str):
 
 
 def get_sentiment_rating(msg: str) -> int:
-    tokenizer = AutoTokenizer.from_pretrained("LiYuan/amazon-review-sentiment-analysis")
-    model = AutoModelForSequenceClassification.from_pretrained("LiYuan/amazon-review-sentiment-analysis")
-    inputs = tokenizer(msg, return_tensors="pt")
-    outputs = model(**inputs)
+    try:
+        tokenizer = AutoTokenizer.from_pretrained("LiYuan/amazon-review-sentiment-analysis")
+        model = AutoModelForSequenceClassification.from_pretrained("LiYuan/amazon-review-sentiment-analysis")
+        inputs = tokenizer(msg, return_tensors="pt")
+        outputs = model(**inputs)
+    except Exception as e:
+        print("Error at get_sentiment_rating:",e)
+        return ""
     return "Thank you for your rating!", torch.argmax(outputs.logits, dim=-1)
 
 
@@ -153,7 +166,7 @@ def get_response(message, product, history=None) -> dict:
     if keyword == "general":
         response_msg = generalHandler(history)
     history = add_history("assistant", response_msg, product, True, history)
-    return {"message": response_msg, "history": history}
+    return {"message": response_msg, "history": history, "product": product}
 
 
 #It would be better practice to instead get all the information from golang, maybe cookies but it's much more difficult
