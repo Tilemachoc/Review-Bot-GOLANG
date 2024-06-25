@@ -25,6 +25,8 @@ var db *gorm.DB
 //and each order could have many items
 //and each item has a review
 //we make a connection with foreignkeys and we also add constraint onupdate-ondelete
+
+
 type User struct {
 	UserID 			uint 			`gorm:"primaryKey"`
 	Name			string			`gorm:"size:100;not null"`
@@ -63,10 +65,10 @@ type Order struct {
 
 
 type OrderItem struct {
-	OrderItemID		uint		`gorm:"primaryKey"`
-	OrderID			uint		`gorm:"not null;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	ItemName		string		`gorm:"size:50"`
-	ItemPrice		float64		`gorm:"type:decimal(10,2)"`
+	OrderItemID		uint		`json:"orderitem_id" gorm:"primaryKey"`
+	OrderID			uint		`json:"order_id" gorm:"not null;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	ItemName		string		`json:"item_name" gorm:"size:50"`
+	ItemPrice		float64		`json:"item_price" gorm:"type:decimal(10,2)"`
 }
 
 type Review struct {
@@ -137,11 +139,11 @@ func insertData() error{
 
 	orderItems := []OrderItem{
 		{OrderID: order.OrderID,
-		ItemName: "iPhone-13",
+		ItemName: "iphone-13",
 		ItemPrice: 649.00,},
 
 		{OrderID: order.OrderID,
-		ItemName: "GPU",
+		ItemName: "gpu",
 		ItemPrice: 2247.49,},
 	}
 	if err := db.Create(&orderItems).Error; err != nil {
