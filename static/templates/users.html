@@ -41,6 +41,8 @@
                         No orders for this user.<br>
                     {{ end }}
                 <td>
+                    <!-- a br outside the range to account for the orderid -->
+                    <br>
                     {{ range .Reviews }}
                         <span>Text Review: </span>{{ .ReviewText }}<br>
                         <span>Star Review: </span>{{ .Rating }}<br>
