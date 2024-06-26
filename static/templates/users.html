@@ -28,10 +28,26 @@
                     {{ .MessageText }}<br><br>
                     {{end}}
                 </td>
-                <td>{{ (index (index .Orders 0).OrderItems 0).ItemName}}</td>
                 <td>
-                    <span>Text Review: </span>{{ (index .Reviews 0).ReviewText }}<br>
-                    <span>Start Review: </span>{{ (index .Reviews 0).Rating}}
+                    {{ range .Orders }}
+                        <strong>Order ID: {{ .OrderID }}</strong><br>
+                        {{ range .OrderItems }}
+                            {{ .ItemName }}<br><br>
+                        {{ else }}
+                            No items in this order.<br>
+                        {{ end }}
+                        <br>
+                    {{ else }}
+                        No orders for this user.<br>
+                    {{ end }}
+                <td>
+                    <!-- a br outside the range to account for the orderid -->
+                    <br>
+                    {{ range .Reviews }}
+                        <span>Text Review: </span>{{ .ReviewText }}<br>
+                        <span>Star Review: </span>{{ .Rating }}<br>
+                        <br><br>
+                    {{ end }}
                 </td>
             </tr>
         {{end}}

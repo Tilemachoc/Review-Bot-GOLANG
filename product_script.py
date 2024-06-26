@@ -6,6 +6,28 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
 import requests
 import json
+import logging
+
+
+# logging helping functions
+
+
+def logging_variable(name, variable):
+    logging.basicConfig(filename="variable_logs.log", level=logging.ERROR)
+    logging.info("%s= %s" % (name,variable))
+
+
+def logging_function(filename):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            result = func(*args, **kwargs)
+            with open(filename, 'a') as f:
+                f.write(f"Function '{func.__name__}' returned: {result}\n")
+            
+            return result
+        return wrapper
+    return decorator
+
 
 load_dotenv()
 
@@ -14,6 +36,7 @@ openai.api_key = api_key
 
 client = openai.OpenAI()
 
+#@logging_function("function_logs.log")
 def add_history(role: str, message: Text, product: str, intent: bool=True, history: List = None):
     if intent:
         instructions = """
@@ -43,18 +66,14 @@ def add_history(role: str, message: Text, product: str, intent: bool=True, histo
         instructions = f"You are iStore AI assistant bot assisting collection information about from customers about their experience with the {product} and answering any questions they might have. Please provide relevant information or assistance on these topics. Ensure that the responses are clear, concise, and helpful to the customer.If the customer's question or statement is about irrelevant topics, politely acknowledge it with a brief apology.In order to assist the user further ask them to provide a star review rating for the {product}"
     if history:
         history.append({"role": role, "content": message})
-        history[0].content = instructions
-        # try:
-        #     history[0].content = instructions
-        # except Exception as e:
-        #     print("Error at history content:",e)
-        #     return []
+        history[0]["content"] = instructions
     else:
         history = [{"role": "system", "content": instructions},{"role": "assistant", "content":f"Hi John 👋\nYou recently received the {product} you ordered, can you tell us about your experience?"},{"role": role, "content": message}]
     return history
 
 
-def response_message(client: openai.OpenAI, history: List) -> str:
+@logging_function("function_logs.log")
+def response_message(client: openai.OpenAI, history: List, role: int) -> str:
     try:
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
@@ -70,32 +89,48 @@ def response_message(client: openai.OpenAI, history: List) -> str:
         assistant_text = response.choices[0].message.content.strip()
     except Exception as e:
         print("Error at response message:",e)
-        return ""
+        if role == "intent-assistant":
+            # TEST intents: REFUND, INFORMATION, RATING, GENERAL
+            return "rating is  lool"
+        elif role == "assistant":
+            return "Hello! Thanks for messaging me!"
     return assistant_text
 
 
+@logging_function("function_logs.log")
 def check_keyword(msg: str) -> str:
-    keywords = {"refund": 0, "information": 0, "rating": 0}
+    try:
+        keywords = {"refund": 0, "information": 0, "rating": 0, "general": 0}
 
-    for word in msg.lower().split():
-        if word in keywords:
-            keywords[word] += 1
+        for word in msg.lower().split():
+            if word in keywords:
+                keywords[word] += 1
+        if sum(keywords.values()) == 0:
+            return "general"
+        
+        sorted_values = sorted(keywords.values(), reverse=True)
+        if sorted_values[0] == sorted_values[1]:
+            return "general"
+    
+        else:
+            #logging_variable("max(keywords, key=keywords.get)", max(keywords, key=keywords.get))
+            return max(keywords, key=keywords.get)
+    except Exception as e:
+        logging.error("Error in check_keyword function:", e)
+        return "err"
 
-    if sum(keywords.values()) == 0:
-        return "general"
-    elif any(keywords[i] == keywords[j] for i,j in keywords.items() if i != j):
-        return "general"
-    else:
-        return max(keywords, key=keywords.get)
 
-
+@logging_function("function_logs.log")
 def refundHandler(product: str):
-    return f"We're sorry to hear the {product} wasn't a perfect fit!  A full refund will be issued to your original payment method within [number] business days."
+    return f"We're sorry to hear the {product} wasn't a perfect fit! \n\nA full refund will be issued to your original payment method within 14 business days."
 
+
+@logging_function("function_logs.log")
 def informationHandler():
     return "For info about our products, site, features, or FAQs, head over to our website: http://localhost:8080/buy.  We're happy to help if you have any further questions!"
 
 
+@logging_function("function_logs.log")
 def ratingHandler(msg: str):
     found = 0
     number = None
@@ -105,10 +140,11 @@ def ratingHandler(msg: str):
             if 1 <= number <= 5:
                 found += 1
                 if found> 1:
-                    return get_sentiment_rating(msg)
+                    return "Thank you for your rating!", get_sentiment_rating(msg)
     return "Thank you for your rating!", number if found == 1 else get_sentiment_rating(msg)
 
 
+@logging_function("function_logs.log")
 def get_sentiment_rating(msg: str) -> int:
     try:
         tokenizer = AutoTokenizer.from_pretrained("LiYuan/amazon-review-sentiment-analysis")
@@ -117,13 +153,14 @@ def get_sentiment_rating(msg: str) -> int:
         outputs = model(**inputs)
     except Exception as e:
         print("Error at get_sentiment_rating:",e)
-        return ""
-    return "Thank you for your rating!", torch.argmax(outputs.logits, dim=-1)
+        return 3
+    return torch.argmax(outputs.logits, dim=-1).item()+1 #+1 because it return index
 
 
+@logging_function("function_logs.log")
 def generalHandler(history: List) -> str:
     global client
-    return response_message(client,history)
+    return response_message(client,history,"assistant")
 
 
 func_map = {
@@ -134,7 +171,7 @@ func_map = {
 }
 
 
-
+#@logging_function("function_logs.log")
 def get_response(message, product, history=None) -> dict:
     global client
     global func_map
@@ -150,7 +187,7 @@ def get_response(message, product, history=None) -> dict:
     #add history
     history_intent = add_history("user", message, product, True, history)
     #get ai answer
-    response_intent = response_message(client, history_intent)
+    response_intent = response_message(client, history_intent, "intent-assistant")
     # have a function that will look for keywords
     keyword = check_keyword(response_intent)
     # for keyword have a map that will map the function for the automatic message or the sentiment analysis
@@ -158,31 +195,68 @@ def get_response(message, product, history=None) -> dict:
     history = add_history("user", message, product, False, history)
     if keyword == "refund":
         response_msg = refundHandler(product)
-    if keyword == "information":
+    elif keyword == "information":
         response_msg = informationHandler()
-    if keyword == "rating":
-        rating, response_msg = ratingHandler(message)
-        send_rating(rating=rating, user_message=message)
-    if keyword == "general":
+    elif keyword == "rating":
+        response_msg, rating = ratingHandler(message)
+        respond_code = send_rating(rating=rating, user_message=message)
+        if respond_code == 201:
+            send_orderitem(product)
+    elif keyword == "general":
         response_msg = generalHandler(history)
+    else:
+        response_msg = "I'm sorry, I didn't understand your request."
     history = add_history("assistant", response_msg, product, True, history)
     return {"message": response_msg, "history": history, "product": product}
 
 
 #It would be better practice to instead get all the information from golang, maybe cookies but it's much more difficult
-def send_rating(rating: int, user_message, Id = 1, orderitemid = 2, user_id = 1):
-    url = "http://localhost:8080/api/users"
-    user_data = {
+@logging_function("function_logs.log")
+def send_rating(rating: int, user_message, Id = 2, orderitemid = 2, user_id = 1):
+    url = "http://localhost:8080/api/reviews"
+    rating_data = {
         "review_id": Id,
         "order_item_id": orderitemid,
         "user_id": user_id,
         "rating": rating,
         "review_text": user_message
     }
-
+    logging_variable("rating_data", rating_data)
     headers = {
         "Content-Type": "application/json"
     }
 
-    response = requests.post(url, data=json.dumps(user_data), headers=headers)
+    response = requests.post(url, data=json.dumps(rating_data), headers=headers)
+    logging_variable("send_rating_response", response)
+    return response.status_code
+
+
+
+
+@logging_function("function_logs.log")
+def send_orderitem(product: str, orderitem_id:int = 3, order_id:int = 1):
+    ItemPriceMap = {
+        "iphone-13": 649.00,
+        "gpu": 2247.49,
+        "monitor": 899.20,
+    }
+
+    url = "http://localhost:8080/api/orderitems"
+    orderitem_data = {
+        "orderitem_id":orderitem_id,
+        "order_id": order_id,
+        "item_name": product,
+        "item_price": ItemPriceMap.get(product, 0)
+    }
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+    
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(url, data=json.dumps(orderitem_data), headers=headers)
+    logging_variable("send_orderitem_response", response)
     return response.status_code

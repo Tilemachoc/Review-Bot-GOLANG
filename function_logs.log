@@ -1,0 +1,22 @@
+Function 'response_message' returned: rating is  lool
+Function 'check_keyword' returned: rating
+Function 'get_sentiment_rating' returned: ('Thank you for your rating!', 3)
+Function 'ratingHandler' returned: ('Thank you for your rating!', ('Thank you for your rating!', 3))
+Function 'send_rating' returned: 400
+Function 'response_message' returned: rating is  lool
+Function 'check_keyword' returned: rating
+Function 'get_sentiment_rating' returned: ('Thank you for your rating!', 3)
+Function 'ratingHandler' returned: ('Thank you for your rating!', ('Thank you for your rating!', 3))
+Function 'send_rating' returned: 400
+Function 'response_message' returned: rating is  lool
+Function 'check_keyword' returned: rating
+Function 'get_sentiment_rating' returned: 3
+Function 'ratingHandler' returned: ('Thank you for your rating!', 3)
+Function 'send_rating' returned: 201
+Function 'send_orderitem' returned: 201
+Function 'response_message' returned: rating is  lool
+Function 'check_keyword' returned: rating
+Function 'get_sentiment_rating' returned: 5
+Function 'ratingHandler' returned: ('Thank you for your rating!', 5)
+Function 'send_rating' returned: 201
+Function 'send_orderitem' returned: 201

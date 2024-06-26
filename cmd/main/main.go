@@ -31,7 +31,8 @@ func main() {
 	http.HandleFunc("/", mainHandler)
 	http.HandleFunc("/users", userHandler)
 	http.HandleFunc("/buy", buyHandler)
-	http.HandleFunc("/api/users", apiUserHandler)
+	http.HandleFunc("/api/reviews", apiReviewHandler)
+	http.HandleFunc("/api/orderitems", apiOrderHandler)
 
 	fmt.Println("Listening on port 8080...")
 	if err = http.ListenAndServe(":8080", nil); err != nil {
@@ -78,25 +79,50 @@ func buyHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 
-func apiUserHandler(w http.ResponseWriter, r *http.Request) {
+func apiReviewHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	var user models.User
+	var review models.Review
 	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&user); err != nil {
+	if err := decoder.Decode(&review); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	result := db.Create(&user)
+	result := db.Create(&review)
 	if result.Error != nil {
-        http.Error(w, result.Error.Error(), http.StatusInternalServerError)
-        return
-    }
+		http.Error(w, result.Error.Error(), http.StatusInternalServerError)
+		return
+	}
+
 
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(user)
+	json.NewEncoder(w).Encode(review)
+}
+
+
+func apiOrderHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var orderitem models.OrderItem
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&orderitem); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	result := db.Create(&orderitem)
+	if result.Error != nil {
+		http.Error(w, result.Error.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(orderitem)
 }
